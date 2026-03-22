@@ -94,11 +94,102 @@ LightGBM が過学習しているかを判断できるようにするため。
 
 ---
 
+## 5. Kaggle Notebook 版 5（u_in 条件まわりの更新）
+
+### 変更理由
+Kaggle 上の Notebook 版 5 に合わせ、`u_in` に関する条件を含む内容へ更新するため。
+
+### 変更内容
+- `ventilator_pressure_lightgbm.ipynb` を大きく更新（コミット: `3a61b6a`）
+
+---
+
+## 6. EDA のコメントアウトと学習データのフィルタ整理
+
+### 変更理由
+実行時間や検証方針の都合で、EDA をオフにし、学習時の `u_out` フィルタを外すため。
+
+### 変更内容
+- **EDA** … 該当セルをコメントアウト
+- **学習データ** … `u_out` に基づく訓練用フィルタをコメントアウト
+- ノートブックの行数・セル構成が整理される（コミット: `652cc40`）
+
+---
+
+## 7. 参考ノートブック・解説ドキュメントの追加とリポジトリ整備
+
+### 変更理由
+学習用のサンプルノートブックと解説 Markdown を揃え、README を現状に合わせ、データセットを Git 管理対象外にするため。
+
+### 変更内容
+- **追加ノートブック** … `lightgbm_sample.ipynb`、`sample.ipynb`、`simple-lightgbm.ipynb` など
+- **解説・ドキュメント** … 各ノート向けの解説 `.md`、コンペ概略、データセット説明、ノートブック差分比較、調査レポートなど
+- **README.md** … 内容・表の更新
+- **`.gitignore`** … `Dataset/`、`.DS_Store` を除外（コミット: `a8fb295`）
+
+---
+
+## 8. google-brain-optuna 系フローへの寄せ（EDA・FE・Optuna・LGBMRegressor）
+
+### 変更理由
+Google Brain ベースのノート（Optuna による探索を含む）と同様の分析・学習フローを `ventilator_pressure_lightgbm.ipynb` に取り込むため。
+
+### 変更内容
+- **EDA** … 再導入・整理
+- **特徴量エンジニアリング** … 該当フローに合わせて更新
+- **Optuna** … 目的関数・Study の例（後続コミットでコメントアウト）
+- **学習** … `LGBMRegressor`、train / valid 分割ベースの流れ
+- **`requirements.txt`** … `optuna` を追加（コミット: `0dff0c9`）
+
+---
+
+## 9. Optuna チューニングの一時停止と `u_out` を特徴量へ
+
+### 変更理由
+毎回のハイパラ探索をオフにしつつ、モデル入力に `u_out` を含めるため。
+
+### 変更内容
+- **Optuna** … `import` と目的関数・Study 例のセルをコメントアウト
+- **特徴量** … `X` / `X_test` に `u_out` を追加
+- **セクション 6 の説明** … 上記に合わせて更新（コミット: `7b4657b`）
+
+---
+
+## 10. 特徴量重要度セクションと LightGBM 警告の解消
+
+### 変更理由
+どの特徴が効いているかを可視化し、`bagging_fraction` / `subsample` の重複などによる LightGBM の警告をなくすため。
+
+### 変更内容
+- **セクション 9（新規）** … gain / split の重要度表、gain の棒グラフ、sklearn 側の split に関する注記
+- **LightGBM** … サンプリング系パラメータの重複を解消、`verbose=-1` を指定
+- **セクション番号** … 提出をセクション 10 に繰り下げ
+- **セクション 8** … サンプリング関連パラメータの説明を追記（コミット: `b3cc36a`）
+
+### 未コミット（作業中のローカルファイル）
+- `google-brain-lightgbm-optuna.ipynb` / `google-brain-lightgbm-optuna.md` … リポジトリに未追加（`git status` 時点）
+
+---
+
+## 11. 施策1（方法 B）: 吸気相のみで学習・呼気は 0 補完
+
+### 変更理由
+`スコアアップ施策評価とロードマップ.md` と同じく、呼気相行を訓練から外し吸気相の予測精度を優先するため。
+
+### 変更内容
+- **訓練** … `u_out=0` の行のみから `X`, `y` を構築
+- **提出** … テストの吸気行はモデル予測、呼気行は `pressure=0` で補完
+
+---
+
 ## ファイル一覧（現在）
 
 | ファイル | 役割 |
 |----------|------|
-| `ventilator_pressure_lightgbm.ipynb` | 分析設計〜提出まで一通り実行するノートブック（Kaggle 専用・過学習判断付き） |
-| `README.md` | 初心者向けの構成・Kaggle での実行方法 |
-| `requirements.txt` | 依存パッケージ（主にローカル用の参考） |
+| `ventilator_pressure_lightgbm.ipynb` | メインノート（Kaggle 想定、EDA/FE、Optuna はコメントアウト、施策1方法Bで吸気相のみ学習、特徴量重要度・過学習判断あり） |
+| `lightgbm_sample.ipynb` / `sample.ipynb` / `simple-lightgbm.ipynb` | 参考・学習用ノートブック |
+| `README.md` | 構成説明・実行の手引き |
+| `requirements.txt` | 依存パッケージ（`optuna` 含む） |
 | `CHANGELOG.md` | 本変更履歴 |
+| 各種 `.md`（解説・コンペ概略・差分比較・調査レポートなど） | ノートブックやコンペの補足資料 |
+| `.gitignore` | `Dataset/` 等の除外設定 |
