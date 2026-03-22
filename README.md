@@ -46,12 +46,32 @@
 
 データはコンペの「Data」を追加すれば自動で `/kaggle/input/ventilator-pressure-prediction/` にマウントされます。追加のダウンロードは不要です。
 
+---
+
+## フォルダ・ファイル構成
+
+リポジトリ直下（`Kaggle_Ventilator-Pressure-Prediction` / Obsidian 上では `14_Kaggle/02_ventilator-pressure/`）の構成です。
+
 ```
-02_ventilator-pressure/
-├── ventilator_pressure_lightgbm.ipynb  ← Kaggle にアップロードして実行
-├── requirements.txt
-└── README.md
+.
+├── ventilator_pressure_lightgbm.ipynb   # メインノートブック（Kaggle 上で実行）
+├── requirements.txt                     # ローカル検証用の依存パッケージ一覧
+├── README.md                            # 本ドキュメント
+├── CHANGELOG.md                         # 変更履歴
+├── EDA作成方針.md                       # EDA の進め方・方針メモ
+├── LightGBM選定根拠と実装方針.md        # LightGBM 採用理由と実装の考え方
+└── 用語説明_目的変数_説明変数_特徴量.md # 用語（目的変数・説明変数・特徴量など）
 ```
+
+| ファイル | 役割 |
+|----------|------|
+| `ventilator_pressure_lightgbm.ipynb` | 分析設計〜前処理〜EDA〜特徴量〜学習〜提出までの一連の流れ |
+| `requirements.txt` | Python パッケージのバージョン指定（主にローカル・再現用） |
+| `README.md` | プロジェクトの概要・実行手順・構成の説明 |
+| `CHANGELOG.md` | バージョンや変更内容の記録 |
+| `EDA作成方針.md` | EDA で確認したい観点・手順のメモ |
+| `LightGBM選定根拠と実装方針.md` | モデル選定と実装方針のドキュメント |
+| `用語説明_目的変数_説明変数_特徴量.md` | 機械学習・本コンペ文脈での用語整理 |
 
 ---
 
