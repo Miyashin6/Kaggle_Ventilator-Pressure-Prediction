@@ -195,6 +195,32 @@ Google Brain ベースのノート（Optuna による探索を含む）と同様
 
 ---
 
+## 13. 施策4: `u_in` 差分特徴量 + `R/C` 交互作用特徴量の追加
+
+### 変更理由
+`スコアアップ施策評価とロードマップ.md` の施策4に沿って、時系列の変化量と呼吸器設定値の相互関係をモデルに明示的に与えるため。
+
+### 変更内容
+- **u_in 差分特徴量** … `u_in_diff1`, `u_in_diff2` を `breath_id` ごとの `diff(1)`, `diff(2)` で追加（欠損は 0 補完）
+- **R/C 交互作用特徴量** … `R_C_mul`（`R * C`）と `R_C_div`（`R / C`）を追加
+- **ノート本文** … セクション5の説明に差分特徴量と交互作用特徴量の追加内容を追記
+- **反映コミット** … `feat(notebook): add policy-4 diff and RC interaction features`（`65062ea`）
+
+---
+
+## 14. 施策2: Optuna によるハイパーパラメータ再チューニング
+
+### 変更理由
+`スコアアップ施策評価とロードマップ.md` の施策2に沿って、施策1/4を反映後の特徴量セットに対して、LightGBM の最適パラメータを再探索するため。
+
+### 変更内容
+- **Optuna セクション更新** … セクション7をコメントアウト例から実行可能コードに更新し、`TPESampler(seed=42)`・`n_trials=20` で探索する構成に変更
+- **探索空間の見直し** … `learning_rate`, `num_leaves`, `max_depth`, `colsample_bytree`, `reg_alpha`, `reg_lambda`, `min_child_weight`, `min_child_samples`, `bagging_fraction`, `bagging_freq` を探索対象に整理
+- **学習パラメータ反映** … セクション8の `lgb_params` をベスト結果へ更新（Best MAE: `1.1589910192692925`）
+- **関連追記** … 初心者向け解説 `施策2_Optuna実装意図_初心者向け解説.md` を新規追加
+
+---
+
 ## ファイル一覧（現在）
 
 | ファイル | 役割 |
