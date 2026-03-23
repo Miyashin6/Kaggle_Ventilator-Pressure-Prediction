@@ -221,6 +221,20 @@ Google Brain ベースのノート（Optuna による探索を含む）と同様
 
 ---
 
+## 15. CV設計の実装: `GroupKFold` + OOF 評価へ移行
+
+### 変更理由
+`CV設計について.md` の方針に合わせ、`train_test_split` による行ベース分割をやめて、`breath_id` 単位でリークを防ぐ評価に統一するため。
+
+### 変更内容
+- **CV方式の変更** … `train_test_split` を廃止し、`GroupKFold(n_splits=5)`（`groups=train_insp["breath_id"]`）へ置き換え
+- **Optuna objective の更新** … 単一 holdout MAE ではなく、5-fold の平均MAEを最小化する目的関数に変更
+- **学習セクションの更新** … foldごとの MAE を出力し、OOF予測から `OOF MAE` を算出
+- **推論ロジックの更新** … テスト吸気相 (`u_out=0`) は各 fold モデルの平均予測（アンサンブル）を採用
+- **ノート本文の更新** … セクション7/8/10の説明を GroupKFold 前提に更新
+
+---
+
 ## ファイル一覧（現在）
 
 | ファイル | 役割 |
