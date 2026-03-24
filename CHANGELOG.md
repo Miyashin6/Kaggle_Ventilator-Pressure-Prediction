@@ -263,6 +263,20 @@ Google Brain ベースのノート（Optuna による探索を含む）と同様
 
 ---
 
+## 18. 特徴量重要度セル修正: `MultiOutputRegressor` 対応
+
+### 変更理由
+施策5のワイド学習後、セクション9（特徴量重要度）で `model.booster_` を参照した際に  
+`AttributeError: 'MultiOutputRegressor' object has no attribute 'booster_'` が発生したため。
+
+### 変更内容
+- **原因特定** … 施策5適用後の `model` は `MultiOutputRegressor` であり、単一 LightGBM モデルの `booster_` を直接持たない
+- **重要度算出ロジック変更** … `model.estimators_`（各出力 step の内部 `LGBMRegressor`）を走査し、`gain` / `split` 重要度を step 方向で平均して集約
+- **互換処理を保持** … 単一出力モデル時は従来どおり `model.booster_` から重要度を取得する分岐を残置
+- **可視化ラベル更新** … グラフ軸ラベルを「outputs 平均 gain」であることが分かる文言へ更新
+
+---
+
 ## ファイル一覧（現在）
 
 | ファイル | 役割 |
