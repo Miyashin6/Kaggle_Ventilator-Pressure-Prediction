@@ -277,6 +277,21 @@ Google Brain ベースのノート（Optuna による探索を含む）と同様
 
 ---
 
+## 19. 提出セル修正: `step` 抽出失敗（warning: 100600行除外）対応
+
+### 変更理由
+セクション10（提出用ファイル作成）で  
+`warning: step 抽出失敗行を除外: 100600` が発生し、吸気相予測の一部が正しく `id` に復元されないリスクがあったため。
+
+### 変更内容
+- **原因特定** … `y_wide` に本来不要な `R` / `C` 列が混入し、`target_col` に `R`,`C` が含まれて `step` 抽出が失敗
+- **ワイド変換の修正** … `to_wide(..., include_rc=True)` を導入し、`y_wide` は `include_rc=False` で `pressure_step*` のみに限定
+- **提出側の保険追加** … `pred_cols` を `pressure_step` 始まり列のみに絞り込み
+- **step 抽出の堅牢化** … `str.extract` 後に `pd.to_numeric(errors="coerce")` を使用し、異常行を `dropna` 後に `astype(int)` する流れへ変更
+- **確認ログ追加** … `y columns sample` を表示し、ターゲット列が `pressure_step*` のみであることを実行時確認可能に変更
+
+---
+
 ## ファイル一覧（現在）
 
 | ファイル | 役割 |
