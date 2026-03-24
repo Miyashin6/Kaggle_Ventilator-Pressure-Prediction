@@ -249,6 +249,20 @@ Google Brain ベースのノート（Optuna による探索を含む）と同様
 
 ---
 
+## 17. 施策5実行時エラー修正: `Input y contains NaN`
+
+### 変更理由
+施策5のワイド学習実行時に `MultiOutputRegressor.fit()` で `ValueError: Input y contains NaN` が発生し、学習が停止したため。
+
+### 変更内容
+- **原因特定** … ワイド変換後の `y_wide`（`pressure_step*`）に欠損値 (`NaN`) が残るケースがあり、`MultiOutputRegressor` が受け付けないことを確認
+- **欠損補完の追加** … 学習前に `X_wide = X_wide.fillna(0.0)`, `y_wide = y_wide.fillna(0.0)` を追加
+- **推論側の安定化** … `X_test_wide` も `reindex(..., fill_value=0.0)` 後に `fillna(0.0)` を適用
+- **確認ログ追加** … `X NaN count` / `y NaN count` を出力し、実行時に欠損ゼロを確認できるように変更
+- **ドキュメント追記** … `施策5_変更内容の目的と変更意図.md` にエラー原因と対策を追記
+
+---
+
 ## ファイル一覧（現在）
 
 | ファイル | 役割 |
